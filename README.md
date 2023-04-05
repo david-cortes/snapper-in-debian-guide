@@ -24,11 +24,11 @@ Thanks to software like [snapper](https://github.com/openSUSE/snapper), [grub-bt
 
 This guide outlines the necessary steps to configure the kind of system described above using the combination of `snapper` + `snapper-rollback` + `grub-btrfs`.
 
-* A premier about BTRFS
-* Installing Debian with a BTRFS partition
-* Creating required BTRFS subvolumes
-* Installing and configuring software for snapshots and rollbacks
-* Performing a system rollback
+* [A premier about BTRFS](https://github.com/david-cortes/snapper-in-debian-guide#a-premier-about-btrfs)
+* [Installing Debian with a BTRFS partition](https://github.com/david-cortes/snapper-in-debian-guide#installing-debian-with-a-btrfs-partition)
+* [Creating required BTRFS subvolumes](https://github.com/david-cortes/snapper-in-debian-guide#creating-required-btrfs-subvolumes)
+* [Installing and configuring software for snapshots and rollbacks](https://github.com/david-cortes/snapper-in-debian-guide#installing-and-configuring-software-for-snapshots-and-rollbacks)
+* [Performing a system rollback](https://github.com/david-cortes/snapper-in-debian-guide#performing-a-system-rollback)
 
 # A premier about BTRFS
 
