@@ -29,6 +29,7 @@ This guide outlines the necessary steps to configure the kind of system describe
 * [Creating required BTRFS subvolumes](https://github.com/david-cortes/snapper-in-debian-guide#creating-required-btrfs-subvolumes)
 * [Installing and configuring software for snapshots and rollbacks](https://github.com/david-cortes/snapper-in-debian-guide#installing-and-configuring-software-for-snapshots-and-rollbacks)
 * [Performing a system rollback](https://github.com/david-cortes/snapper-in-debian-guide#performing-a-system-rollback)
+* [Snapshots for the `/home` subvolume](https://github.com/david-cortes/snapper-in-debian-guide#snapshots-for-the-home-subvolume)
 
 # A premier about BTRFS
 
