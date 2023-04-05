@@ -135,20 +135,20 @@ sudo apt-get update
 * If it doesn't succeed, you might manually need to modify the file `/etc/apt/sources.list` to _not_ use the debian installation CD/DVD and instead use an internet repository. It's highly recommended that you google about it if you aren't familiar with it, but as a quick note, the following will do:
     * Edit the file with your favorite text editor (note that it requires `sudo` permissions to overwrite the file):
     ```shell
-sudo nano /etc/apt/sources.list
+    sudo nano /etc/apt/sources.list
     ```
     * Comment out any lines starting with `cdrom`, by putting a `#` character at the beginning of such lines.
     * Add a line with the debian main repository (for better results, replace "stable" with the name of the debian release - e.g. "bookworm", "trixie", "forky", etc.):
     ```
-deb http://deb.debian.org/debian/ stable main
+    deb http://deb.debian.org/debian/ stable main
     ```
     * Optionally, if you want non-Stallman-approved software, you can add additional parts of the repository there - make the line like this instead:
     ```
-deb http://deb.debian.org/debian/ stable main contrib non-free non-free-firmware
+    deb http://deb.debian.org/debian/ stable main contrib non-free non-free-firmware
     ```
     * Save the file (Ctrl+O if you are using `nano` to edit it) and try the command again:
     ```shell
-sudo apt-get update
+    sudo apt-get update
     ```
 
 Now that you've configured `sudo` and refreshed the repositories cache, you'll want to install a few key software packages for the rest of this guide:
