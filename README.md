@@ -532,30 +532,30 @@ sudo rm -Rf /home/.snapshots/1/snapshot
 
     * Move away the snapshot called `@home`:
     ```shell
-sudo mv /btrfsroot/@home /btrfsroot/@home_old
+    sudo mv /btrfsroot/@home /btrfsroot/@home_old
     ```
     
     * Set the current snapshot as `@home` snapshot:
     ```shell
-sudo btrfs subvol snapshot /btrfsroot/@homesnapshots/1/snapshot /btrfsroot/@home
+    sudo btrfs subvol snapshot /btrfsroot/@homesnapshots/1/snapshot /btrfsroot/@home
     ```
     
     * Edit back your `/etc/fstab` file to have the `/home` path mounted like this:
     ```
-subvol=@home
+    subvol=@home
     ```
     
     * Reboot - e.g.:
     ```shell
-sudo shutdown -r now
+    sudo shutdown -r now
     ```
     
     * Remove the old `/home` snapshot (can also be done from `snapper-gui`):
     ```shell
-sudo rm -Rf /btrfsroot/@home_old
+    sudo rm -Rf /btrfsroot/@home_old
     ```
     
     * Remove the snapshot of what is now the current home (can also be done from `snapper-gui`):
     ```shell
-sudo rm -Rf /btrfsroot/@homesnapshots/.snapshots/1/snapshot
+    sudo rm -Rf /btrfsroot/@homesnapshots/.snapshots/1/snapshot
     ```
