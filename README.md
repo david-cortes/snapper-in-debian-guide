@@ -59,6 +59,8 @@ During installation of Debian, be sure to create a **single** partition of BTRFS
 
 It's pretty straight-forward to do this with the installer, but here are some screenshots in case it's not clear. Note that you'll probably want to set up a larger SWAP partition than what's shown in the screenshots.
 
+**IMPORTANT:** these screenshots depict the process assuming the system is booting in legacy BIOS mode. For UEFI systems, you'll also need a `/boot/efi` entry (screenshots about it to come in the future).
+
 ![image](screenshots/debian_part1.png "debian_part1")
 
 ![image](screenshots/debian_part2.png "debian_part2")
