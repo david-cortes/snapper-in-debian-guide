@@ -336,6 +336,13 @@ printf "$(df --output=source / | tail -n 1) /.snapshots    btrfs    defaults,sub
 sudo mount /.snapshots
 ```
 
+### 1.1 Optional: better snapshot titles
+
+By default, the snapshots that snapper will take after installing or uninstalling packages in Debian will be named as "apt" + pre/post. It's nevertheless possible to have them use more informative names, such as the command that triggered the snapshot creation (e.g. `apt-get install <package>`) by modifying the file `/etc/apt/apt.conf.d/80snapper`.
+
+See this gist for a modification that will make it include the command names:
+https://gist.github.com/imthenachoman/f722f6d08dfb404fed2a3b2d83263118
+
 ## 2. Grub-BTRFS
 
 `grub-btrfs` is not yet (as of 2023-04) available from the debian main repository, but can be installed from GitHub.
