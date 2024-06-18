@@ -20,6 +20,8 @@ Thanks to software like [snapper](https://github.com/openSUSE/snapper), [grub-bt
 * The boot menu offers to boot into any of the available snapshots.
 * The system can be rolled back to a previous snapshot, and this can be done while booting from an older snapshot too.
 
+Note that this combination of `snapper` + `grub-btrfs` + `snapper-rollback` is not the only way of achieving such system - for example, [timeshift](https://github.com/linuxmint/timeshift) and [yabsnap](https://github.com/hirak99/yabsnap) can also be used with `grub-btrfs` instead of `snapper`, and similar alternatives exist for ZFS such as [ZFSBootMenu](https://github.com/zbm-dev/zfsbootmenu). This guide is **specifically for snapper** and BTRFS however.
+
 # Overview
 
 This guide outlines the necessary steps to configure the kind of system described above using the combination of `snapper` + `snapper-rollback` + `grub-btrfs`.
@@ -313,7 +315,7 @@ sudo apt-get install btrfs-progs python3-btrfsutil gawk inotify-tools make build
 sudo apt-get install snapper
 ```
 
-You might perhaps also want `snapper-gui` (note that you'll need to execute it as root in order for it to show you non-user partitions), which provides a graphical interface over `snapper`.
+You might perhaps also want either `snapper-gui` (note that you'll need to execute it as root in order for it to show you non-user partitions) or [btrfs-assistant](https://gitlab.com/btrfs-assistant/btrfs-assistant), which provide graphical interfaces over `snapper`.
 
 After installing snapper, we can now follow [the Arch wiki](https://wiki.archlinux.org/title/Snapper) steps for getting it to take periodic snapshots of the system BTRFS partition (you _might_ optionally configure a similar thing for your `/home` subvolume):
 
@@ -477,16 +479,21 @@ Notice that part of what the command did was to move what's the current snapshot
 sudo rm -Rf /btrfsroot/$(ls /btrfsroot | grep "^@rootfs[0-9]")
 ```
 
-**Note:** you can also delete it visually through the software `snapper-gui`, which assuming it was installed (`sudo apt-get install snapper-gui`), can be launched with root priviliges for this operation as follows:
+**Note:** you can also delete it visually through software like `snapper-gui` or `btrfs-assistant` - for example, assuming `snapper-gui` was installed (`sudo apt-get install snapper-gui`), can be launched with root priviliges for this operation as follows:
 ```shell
 sudo snapper-gui
+```
+
+`btrfs-assistant` will ask for the sudo password on launch, so it's not necessary to launch it with elevated permissions from the start. Assuming a system-wide install from their source repository, can be launched as follows:
+```shell
+btrfs-assistant-launcher
 ```
 
 # Snapshots for the `/home` subvolume
 
 Just like it was done for the root of the file system `/` (subvolume `@rootfs`), it's also possible to let snapper automatically create daily snapshots of the `/home` subvolume and keep the last N of them. There are a couple caveats however:
 
-* Snapshots are create in read-only mode, while typical desktop environments such as KDE plasma are unable to log into a non-writable `/home/<user>` path. Thus, booting into a snapshot of `/home` will first require making it writable, and writable snapshots do not share the same space efficiency optimizations as non-writable ones under a COW system.
+* Snapshots are created in read-only mode, while typical desktop environments such as KDE plasma are unable to log into a non-writable `/home/<user>` path. Thus, booting into a snapshot of `/home` will first require making it writable, and writable snapshots do not share the same space efficiency optimizations as non-writable ones under a COW system.
 * Snapshots of `/home` will not necessarily coincide with snapshots of `/` in terms of the times at which they are taken.
 * Using a snapshot of `/home` requires editing the current `fstab` file for it, thus one cannot easily boot into an old snapshot of `/` alongside with an old snapshot of `/home` (as it requires modifying the `fstab` of the snapshot into which you will boot).
 
@@ -533,7 +540,7 @@ sudo shutdown -r now
 It should now have booted into the old home snapshot. Verify this by noticing that it doesn't have the file named `deleteme` under your home folder.
 
 * If you want to now go back to the actual `/home` instead of the snapshot, then edit back the `fstab` file to how it was at the beginning and then reboot.
-    * Don't forget to clean up the snapshot folder as it won't be auto-removed the same way "timelined" snapshots are. **After rebooting** into the mainline (non-snapshot) `/home` (can also be done from `snapper-gui`):
+    * Don't forget to clean up the snapshot folder as it won't be auto-removed the same way "timelined" snapshots are. **After rebooting** into the mainline (non-snapshot) `/home` (can also be done from `snapper-gui` or `btrfs-assistant`):
 ```shell
 sudo rm -Rf /home/.snapshots/1/snapshot
 ```
@@ -560,12 +567,12 @@ sudo rm -Rf /home/.snapshots/1/snapshot
     sudo shutdown -r now
     ```
     
-    * Remove the old `/home` snapshot (can also be done from `snapper-gui`):
+    * Remove the old `/home` snapshot (can also be done from `snapper-gui` or `btrfs-assistant`):
     ```shell
     sudo rm -Rf /btrfsroot/@home_old
     ```
     
-    * Remove the snapshot of what is now the current home (can also be done from `snapper-gui`):
+    * Remove the snapshot of what is now the current home (can also be done from `snapper-gui` or `btrfs-assistant`):
     ```shell
     sudo rm -Rf /btrfsroot/@homesnapshots/.snapshots/1/snapshot
     ```
