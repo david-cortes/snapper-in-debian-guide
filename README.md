@@ -476,7 +476,7 @@ By this point, you can reboot the system - next it starts, it will boot from the
 
 Notice that part of what the command did was to move what's the current snapshot called `@rootfs` to a new snapshot called `@rootfs<timestamp>`, which if following the `fstab` structure of this guide, will be findable under `/btrfsroot`. **This old unused snapshot doesn't have an auto-delete policy** like the other auto-created snapper snapshots, so you will have to delete it manually after having rebooted into the rolled-back system:
 ```shell
-sudo rm -Rf /btrfsroot/$(ls /btrfsroot | grep "^@rootfs[0-9]")
+find /btrfsroot -maxdepth 1 -type d -name '@rootfs[0-9]*' -exec sudo rm -Rf {} +
 ```
 
 **Note:** you can also delete it visually through software like `snapper-gui` or `btrfs-assistant` - for example, assuming `snapper-gui` was installed (`sudo apt-get install snapper-gui`), can be launched with root priviliges for this operation as follows:
