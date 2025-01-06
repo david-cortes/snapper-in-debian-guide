@@ -31,6 +31,7 @@ This guide outlines the necessary steps to configure the kind of system describe
 * [Creating required BTRFS subvolumes](https://github.com/david-cortes/snapper-in-debian-guide#creating-required-btrfs-subvolumes)
 * [Installing and configuring software for snapshots and rollbacks](https://github.com/david-cortes/snapper-in-debian-guide#installing-and-configuring-software-for-snapshots-and-rollbacks)
 * [Performing a system rollback](https://github.com/david-cortes/snapper-in-debian-guide#performing-a-system-rollback)
+* [Caution: booting snapshots and kernels](https://github.com/david-cortes/snapper-in-debian-guide#caution-booting-snapshots-and-kernels)
 * [Snapshots for the `/home` subvolume](https://github.com/david-cortes/snapper-in-debian-guide#snapshots-for-the-home-subvolume)
 
 # A premier about BTRFS
@@ -488,6 +489,12 @@ sudo snapper-gui
 ```shell
 btrfs-assistant-launcher
 ```
+
+# Caution: booting snapshots and kernels
+
+A word of caution: note that `/boot` is a separate partition from the main partition that was used for the BTRFS subvolumes, and is shared across all subvolumes, including the snapshots. When a new version of the linux kernel gets installed, it registers itself by creating an entry in `/boot`, even though the kernel is installed in a subvolume of the system's root partition (`/`). Hence, when attempting to boot from a snapshot, it will show a menu with selectable linux kernel versions to boot, but those versions might not necessarily be installed in the snapshot that one wants to boot from - one needs to be careful to select a kernel version that would be installed in the snapshot, as otherwise it will lead to boot errors.
+
+Similarly, if performing a rollback to an older snapshot after installing a newer kernel version, it will not clean up these new version entries in the boot menu for kernel versions - be mindful that by default it will try to boot the latest version of the kernel available from `/boot`, which can result in a non-bootable default after a rollback if the snapshot didn't have the latest kernel version. In such cases, one first needs to boot from an available kernel version through entry "Advanced options for Debian GNU/Linux" in the boot menu, and then clean up the missing `/boot` entries through `sudo update-grub`.
 
 # Snapshots for the `/home` subvolume
 
