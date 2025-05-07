@@ -205,6 +205,18 @@ sudo mount /btrfsroot
 ```
 (ignore the warning message that you'll get about `systemctl daemon-reload`. Or issue the command in question from the warning if you want)
 
+**A word of warning:** unless using disk encryption, the code above will hard-code device names and numbers, such as `/dev/sda1`. The mappings from hardware to device nicknames might potentially change if the underlying hardware changes (e.g. by adding extra disks or moving them to a different connector in the motherboard), in which case the configuration will become invalid. For a more consistent configuration when physical changes are expectable, one can write device UUIDs to `/etc/fstab` instead. In order to find out the UUID of a given device, one can issue a command like the following:
+```shell
+sudo blkid <device name>
+```
+
+E.g. if following the earlier commands, and one is only interested in the UUID:
+```shell
+sudo blkid $(df --output=source / | tail -n 1) --output=export | grep "^UUID="
+```
+
+The output `UUID=<hash>` as it comes from that command can be put in the `/etc/fstab` file as the entry at the beginning of a given line in place of `/dev/<nickname>`.
+
 ## Creating the structure
 
 _Note: the `@` in the subvolumes is just a naming convention. One can name the subvolumes differently if needed._
