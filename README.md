@@ -431,6 +431,8 @@ With these 3 pieces of software already installed, now reboot the machine. After
 
 In order to verify that the snapshotting and restoration are working correctly, it's a good idea to try out a rollback.
 
+**Disclaimer:** this guide uses `snapper-rollback`, which is a small external script from [this repository](https://github.com/jrabinow/snapper-rollback). The `snapper` software also comes with a built-in `rollback` command, but the two are not equivalent - see [this post](https://github.com/jrabinow/snapper-rollback/issues/16) for a description about their differences.
+
 As a first step, in order to convince yourself that the rollback has been successful, first install some new software that isn't already in the system through something like `apt`, `apt-get`, `aptitude` or similar. For example, if installing debian, it typically doesn't come with the `atop` software, so install it in order to try:
 ```shell
 sudo apt-get install atop
