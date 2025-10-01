@@ -34,7 +34,7 @@ This guide outlines the necessary steps to configure the kind of system describe
 * [Caution: booting snapshots and kernels](https://github.com/david-cortes/snapper-in-debian-guide#caution-booting-snapshots-and-kernels)
 * [Snapshots for the `/home` subvolume](https://github.com/david-cortes/snapper-in-debian-guide#snapshots-for-the-home-subvolume)
 
-# A premier about BTRFS
+# A primer about BTRFS
 
 The BTRFS file system differs a bit from the paradigms that previous generations of file systems followed. One can read the [Wikipedia article about it](https://en.wikipedia.org/wiki/Btrfs) for more information. A few points for the purposes of this guide:
 
@@ -114,7 +114,7 @@ https://unix.stackexchange.com/a/577765/342846
 
 # Creating required BTRFS subvolumes
 
-## Prequesitive: install `sudo` and necessary software
+## Prerequesite: install `sudo` and necessary software
 
 This guide uses `sudo` for the rest of the commands that it suggests. `sudo` should come by default in a debian install, but **if you added a root password in the installer**, your user will not be able to use `sudo` by default.
 
@@ -390,7 +390,7 @@ sudo update-grub
 
 ## 3. Snapper-Rollback
 
-Also needs to be installed from Git:
+Also needs to be installed from GitHub:
 ```shell
 cd .. # if you were inside the previous git repo
 git clone https://github.com/jrabinow/snapper-rollback.git
