@@ -180,6 +180,23 @@ For the software that this guide uses, you might or might not follow the Arch wi
 * If you use virtualization software such as docker, virt manager, virtualbox, etc. you will probably want to put their files under separate subvolumes too, or perhaps symlink the paths where they put files to a different non-BTRFS partition. These are paths like `/var/lib/libvirt`, `/var/lib/docker`, or `/home/<your user>/VirtualBox\040VMs`. Note that for docker in specific (which already does COW for their images), you'll need some additional configurations - see [this post](https://linuxconfig.org/how-to-move-docker-s-default-var-lib-docker-to-another-directory-on-ubuntu-debian-linux) for more info.
 * If you use some programming language like Python / R / etc., you probably wouldn't want all of their user-installed environments and libraries to be put into your snapshotted subvolume either.
 
+**If using GNOME or GDM:**
+
+If using GDM (GNOME Display Manager) to log in to a desktop environment on boot, additional structure will be needed in order to boot into snapshots with a graphical interface.
+
+GDM will be used by default if selecting GNOME as desktop environment in the Debian installer, but **NOT** if selecting KDE of XFCE, since they use SDDM as default. Note that the display manager can be changed through the Debian alternatives system, but not every desktop environment runs under every display manager.
+
+To verify if the system is using GDM, see if the package `gdm3` is installed:
+```shell
+sudo apt list gdm3 --installed
+```
+
+If that command _only_ prints `Listing... Done`, that means `gdm3` is not installed and these additional entries will not be needed. Otherwise, if some entry listing `gdm3` and something like `[installed,automatic]` is printed, that means GDM is installed.
+
+Under GDM, additional entries will be needed:
+* `/var/lib/gdm3` - required with write permissions, and with folder and contents owned by group `Debian-gdm`.
+* `/var/lib/AccountsService`- required with write permissions, also with folder and contents owned by group `Debian-gdm`.
+
 ## Mounting the volume under `/btrfsroot`
 
 (Note: this name `btrfsroot` is rather unorthodox but is what `snapper-rollback` uses by default)
@@ -297,6 +314,32 @@ sudo shutdown -r now
 sudo rm -rf /btrfsroot/@rootfs/tmp/*
 sudo rm -rf /btrfsroot/@rootfs/tmp/.*
 # (ignore the error message after the last command)
+```
+
+### GDM paths
+
+_(Not needed if using KDE or XFCE, see previous sections for more info)_
+
+For GDM users, additional required entries for graphical boots may be added as follows - note that these commands differ slightly from the ones above:
+
+```shell
+sudo btrfs subvol create /btrfsroot/@var@lib@gdm3
+sudo cp -RT /var/lib/gdm3 /btrfsroot/@var@lib@gdm3
+sudo chown -R --reference /btrfsroot/@rootfs/var/lib/gdm3 /btrfsroot/@var@lib@gdm3
+sudo chmod -R --reference /btrfsroot/@rootfs/var/lib/gdm3 /btrfsroot/@var@lib@gdm3
+printf "$(df --output=source / | tail -n 1) /var/lib/gdm3    btrfs    defaults,subvol=@var@lib@gdm3    0    0\n" | sudo tee -a /etc/fstab
+
+sudo btrfs subvol create /btrfsroot/@var@lib@AccountsService
+sudo cp -RT /var/lib/AccountsService /btrfsroot/@var@lib@AccountsService
+sudo chown -R --reference /btrfsroot/@rootfs/var/lib/AccountsService /btrfsroot/@var@lib@AccountsService
+sudo chmod -R --reference /btrfsroot/@rootfs/var/lib/AccountsService /btrfsroot/@var@lib@AccountsService
+printf "$(df --output=source / | tail -n 1) /var/lib/AccountsService    btrfs    defaults,subvol=@var@lib@AccountsService    0    0\n" | sudo tee -a /etc/fstab
+
+
+sudo shutdown -r now
+## <<< restart >>>
+sudo rm -rf /btrfsroot/@rootfs/lib/gdm3/*
+sudo rm -rf /btrfsroot/@rootfs/lib/AccountsService/*
 ```
 
 **************
