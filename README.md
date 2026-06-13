@@ -534,10 +534,10 @@ By this point, you can reboot the system - next it starts, it will boot from the
 
 Notice that part of what the command did was to move what's the current snapshot called `@rootfs` to a new snapshot called `@rootfs<timestamp>`, which if following the `fstab` structure of this guide, will be findable under `/btrfsroot`. **This old unused snapshot doesn't have an auto-delete policy** like the other auto-created snapper snapshots, so you will have to delete it manually after having rebooted into the rolled-back system:
 ```shell
-find /btrfsroot -maxdepth 1 -type d -name '@rootfs[0-9]*' -exec sudo rm -Rf {} +
+find /btrfsroot -maxdepth 1 -type d -name '@rootfs[0-9]*' -exec sudo btrfs subvolume delete {} +
 ```
 
-**Note:** you can also delete it visually through software like `snapper-gui` or `btrfs-assistant` - for example, assuming `snapper-gui` was installed (`sudo apt-get install snapper-gui`), can be launched with root priviliges for this operation as follows:
+**Note:** you can also delete it visually through software like `snapper-gui` or `btrfs-assistant` (recommended) - for example, assuming `snapper-gui` was installed (`sudo apt-get install snapper-gui`), it can be launched with root priviliges for this operation as follows:
 ```shell
 sudo snapper-gui
 ```
@@ -546,6 +546,8 @@ sudo snapper-gui
 ```shell
 btrfs-assistant-launcher
 ```
+
+Note that one could also delete the files that make up the subvolume (`find /btrfsroot -maxdepth 1 -type d -name '@rootfs[0-9]*' -exec sudo rm -Rf {} +`), but it would be a slower operation than deleting the subvolume through the btrfs CLI.
 
 # Caution: booting snapshots and kernels
 
@@ -604,10 +606,12 @@ sudo shutdown -r now
 It should now have booted into the old home snapshot. Verify this by noticing that it doesn't have the file named `deleteme` under your home folder.
 
 * If you want to now go back to the actual `/home` instead of the snapshot, then edit back the `fstab` file to how it was at the beginning and then reboot.
-    * Don't forget to clean up the snapshot folder as it won't be auto-removed the same way "timelined" snapshots are. **After rebooting** into the mainline (non-snapshot) `/home` (can also be done from `snapper-gui` or `btrfs-assistant`):
-```shell
-sudo rm -Rf /home/.snapshots/1/snapshot
-```
+    * Don't forget to clean up the snapshot if it was generated manually per the commands above, as it won't be auto-removed the same way automatic "timelined" snapshots are. **After rebooting** into the mainline (non-snapshot) `/home` (can also be done from `snapper-gui` or `btrfs-assistant`), assuming the snapshot was numbered '1':
+    ```shell
+    sudo snapper -c home delete 1 # '1' is the snapshot number
+    ```
+
+    Note that one could also delete the files that make up the snapshot (`sudo rm -Rf /home/.snapshots/1/snapshot`), but it would be a slower operation.
 
 * If you would like to take this as your current `/home` snapshot and remove the old one, then:
 
@@ -633,10 +637,10 @@ sudo rm -Rf /home/.snapshots/1/snapshot
     
     * Remove the old `/home` snapshot (can also be done from `snapper-gui` or `btrfs-assistant`):
     ```shell
-    sudo rm -Rf /btrfsroot/@home_old
+    sudo btrfs subvolume delete /btrfsroot/@home_old
     ```
     
-    * Remove the snapshot of what is now the current home (can also be done from `snapper-gui` or `btrfs-assistant`):
+    * Optionally, remove the snapshot of what is now the current home (can also be done from `snapper-gui` or `btrfs-assistant`) - assuming the snapshot number was '1':
     ```shell
-    sudo rm -Rf /btrfsroot/@homesnapshots/.snapshots/1/snapshot
+    sudo snapper -c home delete 1 # '1' is the snapshot number
     ```
